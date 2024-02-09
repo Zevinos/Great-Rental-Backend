@@ -12,7 +12,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const onePlace = await Pet.findOne({
+    const onePlace = await Place.findOne({
       _id: req.params.id,
     });
     res.json(onePlace);
@@ -25,7 +25,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const deleted = await Place.findOneAndDelete({
       _id: req.params.id,
-      owner: req.user._id,
+      hostName: req.user._id,
     });
     if (!deleted) {
       return res.status(401).json({ message: "unauthorized" });
@@ -38,14 +38,76 @@ router.delete("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const createdPlace = await Place.create({
-      country: req.body.country,
-      city: req.body.city,
-      name: req.body.name,
-    });
+    const createdPlace = await Place.create(
+      {
+        _id: req.params.id,
+        hostName: req.user._id,
+      },
+      {
+        country: req.body.country,
+        city: req.body.city,
+        name: req.body.name,
+        description: req.body.description,
+        capacity: req.body.capacity,
+        bathrooms: req.body.bathrooms,
+        price: req.body.price,
+      }
+    );
     res.status(201).json({ id: createdPlace._id });
   } catch (error) {
     next(error);
   }
 });
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    let { country, city, name, description, capacity, bathrooms, price } =
+      req.body;
+
+    if (country === "") {
+      country = undefined;
+    }
+    if (city === "") {
+      city = undefined;
+    }
+    if (name === "") {
+      name = undefined;
+    }
+    if (description === "") {
+      description = undefined;
+    }
+    if (capacity === "") {
+      capacity = undefined;
+    }
+    if (bathrooms === "") {
+      bathrooms = undefined;
+    }
+    if (price === "") {
+      price = undefined;
+    }
+
+    const updatedPlace = await Place.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        hostName: req.user._id,
+      },
+      {
+        country,
+        city,
+        name,
+        description,
+        capacity,
+        bathrooms,
+        price,
+      },
+      {
+        new: true,
+      }
+    );
+    res.status(202).json(updatedPlace);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

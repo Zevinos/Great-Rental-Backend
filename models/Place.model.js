@@ -14,7 +14,7 @@ const placeSchema = new Schema({
   bedrooms: Number,
   price: { type: Number, min: 0, required: true },
   cleaningFee: Number,
-  reviewrating: { Number },
+  reviewrating: Number,
   img: String,
 });
 
