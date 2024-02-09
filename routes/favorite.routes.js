@@ -42,7 +42,7 @@ router.post("/:placeId", async (req, res, next) => {
 router.delete("/:placeId", async (req, res, next) => {
   try {
     await Favorite.findOneAndDelete({
-      pet: req.params.placeId,
+      place: req.params.placeId,
       user: req.user._id,
     });
     return res.sendStatus(204);

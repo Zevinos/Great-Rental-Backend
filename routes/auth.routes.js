@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model.js");
-const isAuthenticated = require("../middleware/jwt.middleware.js");
+const { isAuthenticated } = require("../middleware/jwt.middleware.js");
 const saltRounds = 10;
 
 // POST /auth/signup  - Creates a new user in the database
@@ -14,9 +14,9 @@ router.post("/signup", async (req, res, next) => {
     console.log(req.file);
     console.log(req.files);
     // return res.send("ok")
-    const { username, email, password } = req.body;
+    const { userName, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    if (!userName || !email || !password) {
       return res
         .status(400)
         .json({ message: "Please input all the required fields." });
@@ -50,7 +50,7 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const createdUser = await User.create({
-      username,
+      userName,
       email,
       password: hashedPassword,
     });
