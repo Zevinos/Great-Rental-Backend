@@ -8,7 +8,7 @@ async function isAuthenticated(req, res, next) {
       return res.status(400).json({ message: "No authorization found" });
     }
 
-    const token = authorizationHeader.replace("Bearer", "");
+    const token = authorizationHeader.replace("Bearer ", "");
 
     const payload = jwt.verify(token, process.env.TOKEN_SECRET, {
       algorithms: ["HS256"],

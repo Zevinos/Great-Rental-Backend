@@ -16,6 +16,9 @@ router.get("/:id", async (req, res, next) => {
     const onePlace = await Place.findOne({
       _id: req.params.id,
     });
+    if (!onePlace) {
+      return res.status(401).json({ message: "unauthorized" });
+    }
     res.json(onePlace);
   } catch (error) {
     next(error);
@@ -23,7 +26,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
-  router.get("isAuthenticated");
+  router.get(isAuthenticated);
   try {
     const deleted = await Place.findOneAndDelete({
       _id: req.params.id,
@@ -39,7 +42,7 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  router.get("isAuthenticated");
+  router.get(isAuthenticated);
   try {
     const createdPlace = await Place.create({
       hostName: req.user._id,
@@ -49,7 +52,9 @@ router.post("/", async (req, res, next) => {
       description: req.body.description,
       capacity: req.body.capacity,
       bathrooms: req.body.bathrooms,
+      bedrooms: req.body.bedrooms,
       price: req.body.price,
+      img: req.body.img,
     });
     res.status(201).json({ id: createdPlace._id });
   } catch (error) {
@@ -58,7 +63,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.put("/:id", async (req, res, next) => {
-  router.get("isAuthenticated");
+  router.get(isAuthenticated);
   try {
     let { country, city, name, description, capacity, bathrooms, price } =
       req.body;
@@ -84,6 +89,9 @@ router.put("/:id", async (req, res, next) => {
     if (price === "") {
       price = undefined;
     }
+    if (img === "") {
+      img = undefined;
+    }
 
     const updatedPlace = await Place.findOneAndUpdate(
       {
@@ -98,6 +106,7 @@ router.put("/:id", async (req, res, next) => {
         capacity,
         bathrooms,
         price,
+        img,
       },
       {
         new: true,
