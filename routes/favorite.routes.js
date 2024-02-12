@@ -3,6 +3,7 @@ const Favorite = require("../models/Favorite.model");
 const { isValidObjectId } = require("mongoose");
 
 router.get("/", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
     const allFavoritesOfUser = await Favorite.find({
       user: req.user._id,
@@ -15,6 +16,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/:placeId", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
     if (isValidObjectId(req.params.placeId)) {
       const exist = await Favorite.findOne({
@@ -40,6 +42,7 @@ router.post("/:placeId", async (req, res, next) => {
   }
 });
 router.delete("/:placeId", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
     await Favorite.findOneAndDelete({
       place: req.params.placeId,

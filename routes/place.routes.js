@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Place = require("../models/Place.model");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -22,6 +23,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
     const deleted = await Place.findOneAndDelete({
       _id: req.params.id,
@@ -37,22 +39,18 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
-    const createdPlace = await Place.create(
-      {
-        _id: req.params.id,
-        hostName: req.user._id,
-      },
-      {
-        country: req.body.country,
-        city: req.body.city,
-        name: req.body.name,
-        description: req.body.description,
-        capacity: req.body.capacity,
-        bathrooms: req.body.bathrooms,
-        price: req.body.price,
-      }
-    );
+    const createdPlace = await Place.create({
+      hostName: req.user._id,
+      country: req.body.country,
+      city: req.body.city,
+      name: req.body.name,
+      description: req.body.description,
+      capacity: req.body.capacity,
+      bathrooms: req.body.bathrooms,
+      price: req.body.price,
+    });
     res.status(201).json({ id: createdPlace._id });
   } catch (error) {
     next(error);
@@ -60,6 +58,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.put("/:id", async (req, res, next) => {
+  router.get("isAuthenticated");
   try {
     let { country, city, name, description, capacity, bathrooms, price } =
       req.body;

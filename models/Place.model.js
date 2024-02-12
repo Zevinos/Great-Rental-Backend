@@ -11,11 +11,11 @@ const placeSchema = new Schema({
   property: String,
   capacity: { type: Number, min: 0, required: true },
   bathrooms: { type: Number, min: 0, required: true },
-  bedrooms: Number,
+  bedrooms: { type: Number, min: 0, required: true },
   price: { type: Number, min: 0, required: true },
   cleaningFee: Number,
   reviewrating: Number,
-  img: String,
+  img: { type: String, required: true },
 });
 
 const Place = model("Place", placeSchema);
