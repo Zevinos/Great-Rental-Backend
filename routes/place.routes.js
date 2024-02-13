@@ -25,8 +25,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
-  router.get(isAuthenticated);
+router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const deleted = await Place.findOneAndDelete({
       _id: req.params.id,
@@ -41,8 +40,7 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  router.get(isAuthenticated);
+router.post("/", isAuthenticated, async (req, res, next) => {
   try {
     const createdPlace = await Place.create({
       hostName: req.user._id,
@@ -56,17 +54,29 @@ router.post("/", async (req, res, next) => {
       price: req.body.price,
       img: req.body.img,
     });
+    const allPlaces = await Place.find();
+    allPlaces.unshift(createdPlace);
+    await Promise.all(allPlaces.map((place) => place.save()));
+
     res.status(201).json({ id: createdPlace._id });
   } catch (error) {
     next(error);
   }
 });
 
-router.put("/:id", async (req, res, next) => {
-  router.get(isAuthenticated);
+router.put("/:id", isAuthenticated, async (req, res, next) => {
   try {
-    let { country, city, name, description, capacity, bathrooms, price } =
-      req.body;
+    let {
+      country,
+      city,
+      name,
+      description,
+      capacity,
+      bathrooms,
+      bedrooms,
+      price,
+      img,
+    } = req.body;
 
     if (country === "") {
       country = undefined;
@@ -85,6 +95,9 @@ router.put("/:id", async (req, res, next) => {
     }
     if (bathrooms === "") {
       bathrooms = undefined;
+    }
+    if (bedrooms === "") {
+      bedrooms = undefined;
     }
     if (price === "") {
       price = undefined;
@@ -105,6 +118,7 @@ router.put("/:id", async (req, res, next) => {
         description,
         capacity,
         bathrooms,
+        bedrooms,
         price,
         img,
       },

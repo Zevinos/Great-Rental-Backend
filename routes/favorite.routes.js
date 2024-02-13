@@ -1,13 +1,13 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Favorite = require("../models/Favorite.model");
 const { isValidObjectId } = require("mongoose");
 
-router.get("/", async (req, res, next) => {
-  router.get("isAuthenticated");
+router.get("/", isAuthenticated, async (req, res, next) => {
   try {
     const allFavoritesOfUser = await Favorite.find({
       user: req.user._id,
-    }).select("place");
+    }).populate("place");
 
     res.json(allFavoritesOfUser);
   } catch (error) {
@@ -15,8 +15,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/:placeId", async (req, res, next) => {
-  router.get("isAuthenticated");
+router.post("/:placeId", isAuthenticated, async (req, res, next) => {
   try {
     if (isValidObjectId(req.params.placeId)) {
       const exist = await Favorite.findOne({
@@ -41,8 +40,7 @@ router.post("/:placeId", async (req, res, next) => {
     next(error);
   }
 });
-router.delete("/:placeId", async (req, res, next) => {
-  router.get("isAuthenticated");
+router.delete("/:placeId", isAuthenticated, async (req, res, next) => {
   try {
     await Favorite.findOneAndDelete({
       place: req.params.placeId,
