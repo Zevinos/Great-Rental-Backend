@@ -5,7 +5,6 @@ router.get("/", (req, res, next) => {
 });
 
 router.use("/auth", require("./auth.routes"));
-
 router.use("/places", require("./place.routes"));
 router.use("/favorite", require("./favorite.routes"));
 router.use("/user", require("./user.routes"));
